@@ -47,5 +47,5 @@ Usage
 
 Customization
 
-	•	The current setup is tailored for a specific building layout. If you wish to adapt the code for a different environment or layout, you may need to modify the possible_next dictionary and adjust image handling accordingly.
+The current setup is tailored for a specific building layout. If you wish to adapt the code for a different environment or layout, you may need to modify the possible_next dictionary and adjust image handling accordingly.
 
