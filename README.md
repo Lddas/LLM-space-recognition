@@ -42,7 +42,7 @@ Prerequisites
 Usage
 
 	1.	Run the main application file:
-  2.	Open a web browser and navigate to http://127.0.0.1:5000/.
+	2.	Open a web browser and navigate to http://127.0.0.1:5000/.
 	3.	Follow the instructions in the web interface to upload images and guide the AI to find the desired room.
 
 Customization
