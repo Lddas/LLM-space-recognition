@@ -27,14 +27,11 @@ Project Structure
 	•	app.py: The main application file containing the Flask server and core logic for navigation.
 
 	•	templates/index.html: HTML template for displaying images and navigation controls.
-	•	static/: Directory for storing static files like images (if needed).
-	•	requirements.txt: List of Python package dependencies required to run the project.
 
-Getting Started
+# Getting Started
 
 Prerequisites
 
-	•	Python 3.x
 	•	Required Libraries:
 	•	Flask
 	•	OpenAI
