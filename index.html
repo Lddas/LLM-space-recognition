@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Navigation</title>
+    <style>
+        img {
+            width: 30%;  /* Set image width */
+            margin: 5px; /* Set margin around images */
+            display: inline-block; /* Display images inline */
+        }
+        .container {
+            text-align: center; /* Center align the content in the container */
+        }
+        .hidden {
+            display: none; /* Hide elements with this class */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="current_position">Navigate to Room {{ current_position }}</h1>
+        <div id="images_container">
+            <img id="left_img" class="image" src="{{ image_urls[0] }}" alt="Left">
+            <img id="front_img" class="image" src="{{ image_urls[1] }}" alt="Front">
+            <img id="right_img" class="image" src="{{ image_urls[2] }}" alt="Right">
+        </div>
+        <h2 id="path">Current Path: {{ path }}</h2>
+    </div>
+    <script>
+        function showChosenImage(chosen_direction) {
+            // Hide all images first
+            document.querySelectorAll('.image').forEach(img => img.classList.add('hidden'));
+
+            // Show only the chosen direction image
+            if (chosen_direction === "left") {
+                document.getElementById('left_img').classList.remove('hidden');
+            } else if (chosen_direction === "forward") {
+                document.getElementById('front_img').classList.remove('hidden');
+            } else if (chosen_direction === "right") {
+                document.getElementById('right_img').classList.remove('hidden');
+            }
+
+            // Wait for 1 second before showing all images again
+            setTimeout(() => {
+                document.querySelectorAll('.image').forEach(img => img.classList.remove('hidden'));
+            }, 1000);  // 1 second delay
+        }
+
+        function displayPathImages(image_urls) {
+            const container = document.getElementById('images_container');
+            container.innerHTML = ''; // Clear existing images
+
+            image_urls.forEach(url => {
+                const img = document.createElement('img');
+                img.src = url;
+                img.style.width = "30%"; // Adjust size as needed
+                container.appendChild(img);  // Append images to the container
+            });
+
+            // Close the program after displaying the images
+            setTimeout(() => {
+                alert("Goal reached, displaying path and closing program.");
+                window.close();  // This will attempt to close the browser window
+            }, 5000);  // Adjust delay as needed
+        }
+
+        function updateImages(data) {
+            // Update text content
+            document.getElementById('current_position').innerText = "Navigate to Room " + data.current_position;
+            document.getElementById('path').innerText = "Current Path: " + data.path.join(", ");
+            
+            if (data.goal_reached) {
+                clearInterval(updateInterval);  // Stop updating when goal is reached
+                displayPathImages(data.path_urls);
+                return;
+            }
+
+            // Show only the chosen image
+            showChosenImage(data.chosen_direction);
+
+            // Update image sources
+            const left_img = document.getElementById('left_img');
+            const front_img = document.getElementById('front_img');
+            const right_img = document.getElementById('right_img');
+
+            const images = [left_img, front_img, right_img];
+            const urls = data.image_urls;
+
+            let loadedCount = 0;
+
+            images.forEach((img, index) => {
+                img.onload = () => {
+                    loadedCount++;
+                    if (loadedCount === images.length) {
+                        // Show all images once all are loaded
+                        images.forEach(img => img.classList.remove('hidden'));
+                    }
+                };
+                img.onerror = () => {
+                    console.error('Error loading image: ' + urls[index]);
+                };
+                img.src = urls[index];
+            });
+        }
+
+        function getNextDirection() {
+            fetch('/get_next_direction')
+                .then(response => response.json())
+                .then(data => {
+                    updateImages(data);
+                })
+                .catch(error => console.error('Error fetching direction:', error));
+        }
+
+        let updateInterval = setInterval(getNextDirection, 5000);  // Update every 5 seconds
+
+        window.onload = function() {
+            getNextDirection();  // Fetch immediately on page load
+        };
+    </script>
+</body>
+</html>
